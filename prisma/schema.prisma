@@ -1,0 +1,29 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Scrap {
+  id               String      @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  createdDate      DateTime
+  lastModifiedDate DateTime
+  isChecked        Boolean?
+  author           String?
+  url              String
+  selectors       Selector[]
+}
+
+model Selector {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  selector    String
+  value       String
+  isChecked   Boolean
+  scrapId String?    @db.ObjectId
+  scrap   Scrap? @relation(fields: [scrapId], references: [id])
+}
