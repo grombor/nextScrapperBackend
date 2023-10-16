@@ -1,5 +1,4 @@
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
 
 require('dotenv').config();
@@ -11,29 +10,15 @@ const app = express();
 // Użyj middleware CORS
 app.use(cors());
 
-app.use(express.json()); // Middleware do obsługi JSON
+// Middleware do obsługi JSON
+app.use(express.json()); 
 
-const prisma = new PrismaClient();
+
+// Importowanie scrapRoutes.js
+const scrapList = require('./routes/scrapList')
 
 // Endpoint dla pobierania listy Scrapów (GET)
-app.get('/api/scrap-list', async (req, res) => {
-  try {
-    const scraps = await prisma.scrap.findMany({
-      include: {
-        selectors: true,
-      },
-    });
-
-    if (scraps.length === 0) {
-      return res.status(404).json({ message: 'No entries found in the database.' });
-    }
-
-    res.json({ data: scraps });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+app.get('/api/scrap-list', scrapList );
 
 
 // Endpoint dla pobierania Scrapa po ID (GET)
@@ -42,11 +27,11 @@ app.get('/api/scrap/:id', (req, res) => {
   res.send('it works');
 });
 
+// Importowanie scrapRoutes.js
+const scrapAdd = require('./routes/scrapAdd')
+
 // Endpoint dla dodawania Scrapa (POST)
-app.post('/api/scrap', (req, res) => {
-  console.log('it works');
-  res.send('it works');
-});
+app.post('/api/scrap-add', scrapAdd);
 
 // Endpoint dla usuwania Scrapa po ID (DELETE)
 app.delete('/api/scrap/:id', (req, res) => {
