@@ -1,5 +1,6 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
+const { v4: uuid } = require('uuid');
 const router = express.Router();
 const cors = require('cors');
 const prisma = new PrismaClient();
@@ -41,6 +42,7 @@ router.post('/api/scrap-add', cors(corsOptions), async (req, res) => {
 
     const newScrap = await prisma.scrap.create({
       data: {
+        uuid: uuid(),
         name,
         createdDate: new Date().toISOString(),
         lastModifiedDate: new Date().toISOString(),
