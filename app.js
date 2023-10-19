@@ -8,7 +8,13 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 // Użyj middleware CORS
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:3000', // Adres domeny frontendu
+  methods: 'GET,POST,DELETE', // Dozwolone metody HTTP
+};
+
+app.use(cors(corsOptions));
+
 
 // Middleware do obsługi JSON
 app.use(express.json()); 
