@@ -33,7 +33,7 @@ router.delete('/api/scrap/:id', cors(corsOptions), async (req, res) => {
     // Usuń scrap z bazy danych
     await prisma.scrap.delete({
       where: {
-        uuid: scrapId,
+        id: id,
       },
     });
 
