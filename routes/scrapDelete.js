@@ -11,12 +11,8 @@ const corsOptions = {
 };
 
 router.delete('/api/scrap/:id', cors(corsOptions), async (req, res) => {
-  const id = req.params.id; // Pobierz identyfikator scrapu do usunięcia
+  const id = req.params.id; // Pobierz identyfikator scrapu do usunięcia z url
 
-  // debug
-//   console.log(scrapId)
-//   return res.status(200)
-// })
 
   try {
     // Sprawdź, czy scrap istnieje
