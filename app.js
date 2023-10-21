@@ -25,12 +25,11 @@ const scrapList = require('./routes/scrapList')
 // Endpoint dla pobierania listy Scrapów (GET)
 app.get('/api/scrap-list', scrapList );
 
+// Importowanie scrapRoutes.js
+const scrapData = require('./routes/scrapData')
 
-// Endpoint dla pobierania Scrapa po ID (GET)
-app.get('/api/scrap/:id', (req, res) => {
-  console.log('it works');
-  res.send('it works');
-});
+// Endpoint dla pobierania listy Scrapów (POST)
+app.post('/api/scrap-data', scrapData );
 
 // Importowanie scrapRoutes.js
 const scrapAdd = require('./routes/scrapAdd')
@@ -40,6 +39,12 @@ app.post('/api/scrap-add', scrapAdd);
 
 // Importowanie scrapRoutes.js
 const scrapDelete = require('./routes/scrapDelete')
+
+// Endpoint dla pobierania Scrapa po ID (GET)
+app.get('/api/scrap/:id', (req, res) => {
+  console.log('it works');
+  res.send('it works');
+});
 
 // Endpoint dla usuwania Scrapa po ID (DELETE)
 app.delete('/api/scrap/:id', scrapDelete);

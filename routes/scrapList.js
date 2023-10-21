@@ -1,9 +1,16 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
+const cors = require('cors');
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.get('/api/scrap-list', async (req, res) => {
+// Użyj middleware CORS
+const corsOptions = {
+  origin: 'http://localhost:3000', // Adres domeny frontendu
+  methods: 'POST', // Dozwolone metody HTTP
+};
+
+router.get('/api/scrap-list', cors(corsOptions), async (req, res) => {
   try {
     const scraps = await prisma.scrap.findMany({
       include: {
@@ -20,6 +27,6 @@ router.get('/api/scrap-list', async (req, res) => {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-});
+})
 
 module.exports = router;
