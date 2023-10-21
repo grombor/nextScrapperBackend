@@ -15,7 +15,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-
 // Middleware do obsługi JSON
 app.use(express.json()); 
 
@@ -39,11 +38,11 @@ const scrapAdd = require('./routes/scrapAdd')
 // Endpoint dla dodawania Scrapa (POST)
 app.post('/api/scrap-add', scrapAdd);
 
+// Importowanie scrapRoutes.js
+const scrapDelete = require('./routes/scrapDelete')
+
 // Endpoint dla usuwania Scrapa po ID (DELETE)
-app.delete('/api/scrap/:id', (req, res) => {
-  console.log('it works');
-  res.send('it works');
-});
+app.delete('/api/scrap/:id', scrapDelete);
 
 app.listen(port, () => {
   console.log(`Aplikacja jest uruchomiona na porcie ${port}`);

@@ -13,10 +13,6 @@ const corsOptions = {
 
 router.post('/api/scrap-add', cors(corsOptions), async (req, res) => {
 
-  // const receivedObject = req.body;
-  // console.log(receivedObject);
-  // res.status(200).json({ message: 'Object received successfully' });
-
   try {
     const {
       name,
@@ -57,6 +53,7 @@ router.post('/api/scrap-add', cors(corsOptions), async (req, res) => {
 
     return res.status(201).json({
       data: newScrap,
+      message: 'Object created successfully'
     });
 
   } catch (error) {
