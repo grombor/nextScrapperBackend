@@ -21,9 +21,11 @@ async function scrapFromArray(scraps) {
       try {
         const url = scrap.url;
         const selectors = scrap.selectors;
+
         // Wywołaj funkcję scrapującą
         const scrapedData = await doScraping(url, selectors);
         results.push(scrapedData);
+
       } catch (error) {
         console.error(`Błąd podczas scrapowania ${url}: ${error.message}`);
         return { error: `Błąd podczas scrapowania ${url}: ${error.message}` };
@@ -41,20 +43,27 @@ async function doScraping(url, selectors) {
 
   // Przykładowy kod scrapowania
   const response = await axios.get(url);
-  const html = response.data;
-  const $ = cheerio.load(html);
+  // const html = response.data;
+  // const $ = cheerio.load(html);
 
   // Użyj selektorów do scrapowania danych
-  const title = $(selectors.title).text();
-  const description = $(selectors.description).text();
+  // const title = $(selectors.title).text();
+  // const description = $(selectors.description).text();
 
   // Przygotuj wynik scrapowania
-  const scrapedData = {
-    title,
-    description,
-  };
+  // const scrapedData = {
+  //   title,
+  //   description,
+  // };
 
-  return scrapedData;
+  selectors.map((selector) => {
+    console.log(url)
+    console.log(selector)
+  })
+
+  return null
+
+  // return scrapedData;
 }
 
 router.post('/api/scrap-data', cors(corsOptions), async (req, res) => {
