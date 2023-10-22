@@ -19,16 +19,12 @@ async function scrapFromArray(scraps) {
   await Promise.all(
     scraps.map(async (scrap) => {
       try {
-        const url = scrap.url;
-        const selectors = scrap.selectors;
-
         // Wywołaj funkcję scrapującą
-        const scrapedData = await doScraping(url, selectors);
+        const scrapedData = await doScraping(scrap);
         results.push(scrapedData);
-
       } catch (error) {
-        console.error(`Błąd podczas scrapowania ${url}: ${error.message}`);
-        return { error: `Błąd podczas scrapowania ${url}: ${error.message}` };
+        console.error(`Błąd podczas scrapowania ${scrap.url}: ${error.message}`);
+        return { error: `Błąd podczas scrapowania ${scrap.url}: ${error.message}` };
       }
     })
   );
@@ -37,33 +33,33 @@ async function scrapFromArray(scraps) {
   return results;
 }
 
-async function doScraping(url, selectors) {
-  // Tutaj zdefiniuj kod do scrapowania
-  // np. używając bibliotek takich jak Axios i Cheerio
+async function doScraping(scrap) {
+  const url = scrap.url;
+  const selectors = scrap.selectors;
 
-  // Przykładowy kod scrapowania
   const response = await axios.get(url);
-  // const html = response.data;
-  // const $ = cheerio.load(html);
+  const html = response.data;
+  const $ = cheerio.load(html);
 
-  // Użyj selektorów do scrapowania danych
-  // const title = $(selectors.title).text();
-  // const description = $(selectors.description).text();
+  let updatedSelectors = [];
 
-  // Przygotuj wynik scrapowania
-  // const scrapedData = {
-  //   title,
-  //   description,
-  // };
+  selectors.forEach(selector => {
 
-  selectors.map((selector) => {
-    console.log(url)
-    console.log(selector)
+    let updatedSelector = {
+      ...selector,
+      value: $(selector.selector).text()
+    }
+
+    updatedSelectors.push(updatedSelector)
   })
 
-  return null
+  // Scrap results
+  let scrapResults = {
+    ...scrap,
+    selectors: updatedSelectors
+  }
 
-  // return scrapedData;
+  return scrapResults
 }
 
 router.post('/api/scrap-data', cors(corsOptions), async (req, res) => {
@@ -79,7 +75,7 @@ router.post('/api/scrap-data', cors(corsOptions), async (req, res) => {
     const scraps = await prisma.scrap.findMany({
       where: {
         id: {
-          in: ids, // Znajdź obiekty o ID z przesłanej tablicy
+          in: ids,
         },
       },
       include: {
