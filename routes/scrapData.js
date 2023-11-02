@@ -6,6 +6,8 @@ const axios = require('axios'); // Import Axios
 const cheerio = require('cheerio'); // Import Cheerio
 const fs = require('fs');
 
+const makeCsv = require('../helpers/makeCsv');
+
 const prisma = new PrismaClient();
 
 // Użyj middleware CORS
@@ -20,17 +22,19 @@ async function scrapFromArray(scraps) {
   await Promise.all(
     scraps.map(async (scrap) => {
       try {
-        // Wywołaj funkcję scrapującą
         const scrapedData = await doScraping(scrap);
         results.push(scrapedData);
       } catch (error) {
-        console.error(`Błąd podczas scrapowania ${scrap.url}: ${error.message}`);
-        return { error: `Błąd podczas scrapowania ${scrap.url}: ${error.message}` };
+        console.error(
+          `Błąd podczas scrapowania ${scrap.url}: ${error.message}`
+        );
+        return {
+          error: `Błąd podczas scrapowania ${scrap.url}: ${error.message}`,
+        };
       }
     })
   );
 
-  // Zwróc ścrapy z zaktualizowanymi wartościami
   return results;
 }
 
@@ -44,38 +48,85 @@ async function doScraping(scrap) {
 
   let updatedSelectors = [];
 
-  selectors.forEach(selector => {
-
+  selectors.forEach((selector) => {
     let updatedSelector = {
       ...selector,
-      value: $(selector.selector).text().replace(/\s+/g, ' ').trim()
-    }
+      value: $(selector.selector).text().replace(/\s+/g, ' ').trim(),
+    };
 
-    updatedSelectors.push(updatedSelector)
-  })
+    updatedSelectors.push(updatedSelector);
+  });
 
   // Scrap results
   let scrapResults = {
     ...scrap,
-    selectors: updatedSelectors
-  }
+    selectors: updatedSelectors,
+  };
 
-  return scrapResults
+  return scrapResults;
 }
 
-async function saveToFile(results) {
-  const jsonData = JSON.stringify(results);
+// function makeCsv(object) {
+//   const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
-  // Zapisz dane do pliku txt
-  fs.writeFile('results.txt', jsonData, 'utf8', (err) => {
-    if (err) {
-      console.error('Błąd podczas zapisywania pliku:', err);
-      // res.status(500).send('Wystąpił błąd podczas zapisywania pliku');
-    } else {
-      console.log('Dane zapisane do pliku results.txt');
-      res.send('Dane zapisane do pliku results.txt');
-    }
-  });
+//   const header = [
+//     { id: 'id', title: 'id' },
+//     { id: 'name', title: 'name' },
+//     { id: 'createdDate', title: 'createdDate' },
+//     { id: 'lastModifiedDate', title: 'lastModifiedDate' },
+//   ];
+
+//   const selectors = [];
+//   object.selectors.forEach((selector) => {
+//     const selectorHeader = {
+//       id: selector.name,
+//       title: selector.name
+//     }
+//     selectors.push(selectorHeader)
+//   });
+
+//     // Przygotuj rekord na podstawie selectors
+//     const record = {
+//       id: object.id,
+//       name: object.name,
+//       createdDate: object.createdDate,
+//       lastModifiedDate: object.createdDate,
+//     };
+  
+//     // Przypisz wartości do rekordu z selectors.value
+//     object.selectors.forEach((selector) => {
+//       record[selector.name] = selector.value;
+//     });
+  
+//     const records = [record];
+  
+//     function sanitizeFileName(name) {
+//       return name.replace(/[\\/:*?"<>|]/g, ''); // Usuwa niedozwolone znaki
+//     }
+
+//     const outputFilePath = `public/results/${object.id}_${sanitizeFileName(object.name)}_${getCurrentDate()}.csv`;
+
+//   // Tworzenie obiektu CsvWriter
+//   const csvWriter = createCsvWriter({
+//     path: outputFilePath,
+//     header: [...header, ...selectors],
+//   });
+
+//   // Zapisywanie rekordów do pliku CSV
+//   csvWriter
+//     .writeRecords(records)
+//     .then(() => {
+//       console.log(`Zapisano plik CSV do ${outputFilePath}`);
+//     })
+//     .catch((error) => {
+//       console.error('Błąd podczas zapisywania pliku CSV:', error);
+//     });
+// }
+
+async function saveToFile(results) {
+  results?.map(result => {
+    makeCsv(result);
+  })
 }
 
 router.post('/api/scrap-data', cors(corsOptions), async (req, res) => {
@@ -100,15 +151,14 @@ router.post('/api/scrap-data', cors(corsOptions), async (req, res) => {
     });
 
     if (scraps.length === 0) {
-      return res.status(404).json({ message: 'No entries found in the database.' });
+      return res
+        .status(404)
+        .json({ message: 'No entries found in the database.' });
     }
 
     const results = await scrapFromArray(scraps);
 
-    // console.log(JSON.stringify(results))
-    await saveToFile(results)
-
-
+    await saveToFile(results);
 
     res.status(200).json({ data: results });
   } catch (error) {
