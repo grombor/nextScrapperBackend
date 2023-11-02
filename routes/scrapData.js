@@ -4,6 +4,7 @@ const cors = require('cors');
 const router = express.Router();
 const axios = require('axios'); // Import Axios
 const cheerio = require('cheerio'); // Import Cheerio
+const fs = require('fs');
 
 const prisma = new PrismaClient();
 
@@ -47,7 +48,7 @@ async function doScraping(scrap) {
 
     let updatedSelector = {
       ...selector,
-      value: $(selector.selector).text()
+      value: $(selector.selector).text().replace(/\s+/g, ' ').trim()
     }
 
     updatedSelectors.push(updatedSelector)
@@ -60,6 +61,21 @@ async function doScraping(scrap) {
   }
 
   return scrapResults
+}
+
+async function saveToFile(results) {
+  const jsonData = JSON.stringify(results);
+
+  // Zapisz dane do pliku txt
+  fs.writeFile('results.txt', jsonData, 'utf8', (err) => {
+    if (err) {
+      console.error('Błąd podczas zapisywania pliku:', err);
+      // res.status(500).send('Wystąpił błąd podczas zapisywania pliku');
+    } else {
+      console.log('Dane zapisane do pliku results.txt');
+      res.send('Dane zapisane do pliku results.txt');
+    }
+  });
 }
 
 router.post('/api/scrap-data', cors(corsOptions), async (req, res) => {
@@ -88,6 +104,12 @@ router.post('/api/scrap-data', cors(corsOptions), async (req, res) => {
     }
 
     const results = await scrapFromArray(scraps);
+
+    // console.log(JSON.stringify(results))
+    await saveToFile(results)
+
+
+
     res.status(200).json({ data: results });
   } catch (error) {
     console.error(error);
