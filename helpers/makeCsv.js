@@ -1,4 +1,7 @@
 const getCurrentDate = require('./getCurrentDate');
+const fs = require('fs');
+const path = require('path');
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 function makeCsv(object) {
     const createCsvWriter = require('csv-writer').createObjectCsvWriter;
@@ -24,7 +27,8 @@ function makeCsv(object) {
         id: object.id,
         name: object.name,
         createdDate: object.createdDate,
-        lastModifiedDate: object.createdDate,
+        // lastModifiedDate: object.createdDate,
+        lastModifiedDate: new Date().toISOString(),
       };
     
       // Przypisz wartości do rekordu z selectors.value
@@ -34,27 +38,49 @@ function makeCsv(object) {
     
       const records = [record];
     
-      function sanitizeFileName(name) {
-        return name.replace(/[\\/:*?"<>|]/g, ''); // Usuwa niedozwolone znaki
+      const outputDir = 'public/results';
+      const outputFilePath = path.join(outputDir, `${object.id}.csv`);
+    
+      // Sprawdź, czy plik istnieje
+      if (fs.existsSync(outputFilePath)) {
+        // Jeśli plik istnieje, odczytaj jego zawartość
+        const existingContent = fs.readFileSync(outputFilePath, 'utf8');
+        
+        // Rozbij zawartość na linie i usuń pustą linię na końcu (jeśli istnieje)
+        const lines = existingContent.trim().split('\n');
+        const lastLine = lines[lines.length - 1];
+        
+        if (!lastLine) {
+          lines.pop();
+        }
+        
+        // Dodaj nowy rekord do zawartości
+        lines.push(recordToCsvLine(record));
+        
+        // Zapisz zaktualizowaną zawartość do pliku
+        fs.writeFileSync(outputFilePath, lines.join('\n'));
+      } else {
+        // Jeśli plik nie istnieje, utwórz go od nowa
+        const csvWriter = createCsvWriter({
+          path: outputFilePath,
+          header: [...header, ...selectors],
+        });
+      
+        // Zapisywanie rekordów do pliku CSV
+        csvWriter
+          .writeRecords(records)
+          .then(() => {
+            console.log(`Zapisano plik CSV do ${outputFilePath}`);
+          })
+          .catch((error) => {
+            console.error('Błąd podczas zapisywania pliku CSV:', error);
+          });
       }
-  
-      const outputFilePath = `public/results/${object.id}_${sanitizeFileName(object.name)}_${getCurrentDate()}.csv`;
-  
-    // Tworzenie obiektu CsvWriter
-    const csvWriter = createCsvWriter({
-      path: outputFilePath,
-      header: [...header, ...selectors],
-    });
-  
-    // Zapisywanie rekordów do pliku CSV
-    csvWriter
-      .writeRecords(records)
-      .then(() => {
-        console.log(`Zapisano plik CSV do ${outputFilePath}`);
-      })
-      .catch((error) => {
-        console.error('Błąd podczas zapisywania pliku CSV:', error);
-      });
-  }
-
-  module.exports = makeCsv;
+    }
+    
+    // Funkcja zamieniająca rekord na linię CSV
+    function recordToCsvLine(record) {
+      return Object.values(record).join(',');
+    }
+    
+    module.exports = makeCsv;
