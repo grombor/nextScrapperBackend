@@ -5,7 +5,7 @@ const router = express.Router();
 const axios = require('axios'); // Import Axios
 const cheerio = require('cheerio'); // Import Cheerio
 
-const makeCsv = require('../helpers/makeCsv');
+const makeCsv = require('../../helpers/makeCsv');
 
 const prisma = new PrismaClient();
 
@@ -66,9 +66,9 @@ async function doScraping(scrap) {
 }
 
 async function saveToFile(results) {
-  results?.map(result => {
+  results?.map((result) => {
     makeCsv(result);
-  })
+  });
 }
 
 router.post('/api/scrap-data', cors(corsOptions), async (req, res) => {
