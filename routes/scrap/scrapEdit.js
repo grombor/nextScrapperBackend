@@ -31,26 +31,28 @@ router.put('/api/scrap/:id', cors(corsOptions), async (req, res) => {
     // Odczytaj dane z ciała zapytania PUT
     const newDataFromPUT = req.body; // Nowe dane z PUT
 
-    // Aktualizuj obiekt Scrap używając danych z zapytania PUT
-    for (const key in newDataFromPUT) {
-      if (newDataFromPUT[key] !== '') {
-        existingScrap = {
-          ...existingScrap,
-          [key]: newDataFromPUT[key],
-        };
-      }
-    }
+    // Budujemy strukturę danych, aby uniknąć błędu dotyczącego pola selectors
+    const updatedSelectors = newDataFromPUT.selectors || existingScrap.selectors;
 
-    // Zaktualizuj Scrap w bazie danych
+    // Aktualizuj obiekt Scrap używając danych z zapytania PUT
     const updatedScrap = await prisma.scrap.update({
       where: {
         id: id,
       },
-      data: existingScrap,
+      data: {
+        name: newDataFromPUT.name || existingScrap.name,
+        createdDate: newDataFromPUT.createdDate || existingScrap.createdDate,
+        lastModifiedDate: new Date().toISOString(), // Aktualna data w formacie ISO
+        isChecked: newDataFromPUT.isChecked !== undefined ? newDataFromPUT.isChecked : existingScrap.isChecked,
+        author: newDataFromPUT.author || existingScrap.author,
+        url: newDataFromPUT.url || existingScrap.url,
+        selectors: [...updatedSelectors]
+      },
     });
 
     // Zwróć zaktualizowany obiekt
-    return res.status(200).json({ message: updatedScrap });
+    return res.status(200).json(updatedSelectors);
+    // return res.status(200).json({ message: updatedSelectors });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Server error.' });
