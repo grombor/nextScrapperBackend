@@ -6,6 +6,7 @@
   "dependencies": {
     "@prisma/client": "^5.4.2",
     "axios": "^1.5.1",
+    "body-parser": "^1.20.2",
     "cheerio": "^1.0.0-rc.12",
     "cheerio-select": "^2.1.0",
     "cors": "^2.8.5",

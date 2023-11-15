@@ -7,15 +7,15 @@ const prisma = new PrismaClient();
 // Użyj middleware CORS
 const corsOptions = {
   origin: 'http://localhost:3000', // Adres domeny frontendu
-  methods: 'GET', // Dozwolona metoda HTTP
+  methods: 'PUT', // Dozwolona metoda HTTP
 };
 
-router.get('/api/scrap/:id', cors(corsOptions), async (req, res) => {
-  const id = req.params.id; // Pobierz identyfikator scrapu do edycji z url
+router.put('/api/scrap/:id', cors(corsOptions), async (req, res) => {
+  const id = req.params.id; // Pobierz identyfikator scrapu do edycji z URL
 
   try {
     // Sprawdź, czy scrap istnieje
-    const existingScrap = await prisma.scrap.findUnique({
+    let existingScrap = await prisma.scrap.findUnique({
       where: {
         id: id,
       },
@@ -28,15 +28,34 @@ router.get('/api/scrap/:id', cors(corsOptions), async (req, res) => {
       return res.status(404).json({ error: 'Scrap not found' });
     }
 
-    // logika pobrania z PUTa obiektu ktory nadpisze biezace parametry lub utworzy nowy scrap
+    // Odczytaj dane z ciała zapytania PUT
+    const newDataFromPUT = req.body; // Nowe dane z PUT
 
-    // Zwróc obiekt ktory odpowiada  podanemu id
-    return res.status(200).json({ message: existingScrap });
+    // Aktualizuj obiekt Scrap używając danych z zapytania PUT
+    for (const key in newDataFromPUT) {
+      if (newDataFromPUT[key] !== '') {
+        existingScrap = {
+          ...existingScrap,
+          [key]: newDataFromPUT[key],
+        };
+      }
+    }
 
+    // Zaktualizuj Scrap w bazie danych
+    const updatedScrap = await prisma.scrap.update({
+      where: {
+        id: id,
+      },
+      data: existingScrap,
+    });
+
+    // Zwróć zaktualizowany obiekt
+    return res.status(200).json({ message: updatedScrap });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Server error.' });
   }
 });
+
 
 module.exports = router;
