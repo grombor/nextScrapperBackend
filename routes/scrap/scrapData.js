@@ -87,9 +87,9 @@ router.post('/api/scrap-data', cors(corsOptions), async (req, res) => {
           in: ids,
         },
       },
-      include: {
-        selectors: true,
-      },
+      // include: {
+      //   selectors: true,
+      // },
     });
 
     if (scraps.length === 0) {

@@ -19,9 +19,9 @@ router.get('/api/scrap/:id', cors(corsOptions), async (req, res) => {
       where: {
         id: id,
       },
-      include: {
-        selectors: true,
-      },
+      // include: {
+      //   selectors: true,
+      // },
     });
 
     if (!existingScrap) {
@@ -29,7 +29,8 @@ router.get('/api/scrap/:id', cors(corsOptions), async (req, res) => {
     }
 
     // Zwróc obiekt ktory odpowiada  podanemu id
-    return res.status(200).json({ message: existingScrap });
+    return res.status(200).json(existingScrap);
+    // return res.status(200).json({ message: existingScrap });
 
   } catch (error) {
     console.error(error);

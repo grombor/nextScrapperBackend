@@ -7,23 +7,23 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Collection {
+  id       String      @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  author   String
+  uuid     String      @unique
+  scraps   Scrap[]
+}
+
 model Scrap {
   id               String      @id @default(auto()) @map("_id") @db.ObjectId
   name             String
   createdDate      DateTime
   lastModifiedDate DateTime
-  isChecked        Boolean?
+  // isChecked        Boolean?
   author           String?
   url              String
-  selectors       Selector[]
-}
-
-model Selector {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  selector    String
-  value       String
-  isChecked   Boolean
-  scrapId String?    @db.ObjectId
-  scrap   Scrap? @relation(fields: [scrapId], references: [id])
+  selectors        Json[]      // Użycie Json[] dla przechowywania danych w formacie JSON
+  collection       Collection? @relation(fields: [collectionId], references: [id])
+  collectionId     String?    @db.ObjectId
 }

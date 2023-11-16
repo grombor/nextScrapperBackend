@@ -31,10 +31,10 @@ router.post('/api/scrap-add', cors(corsOptions), async (req, res) => {
       });
     }
 
-    const newSelectors = selectors.map((selector) => ({
-      ...selector,
-      value: selector.value || '',
-    }));
+    // const newSelectors = selectors.map((selector) => ({
+    //   ...selector,
+    //   value: selector.value || '',
+    // }));
 
     const currentDate = new Date().toISOString()
 
@@ -44,12 +44,13 @@ router.post('/api/scrap-add', cors(corsOptions), async (req, res) => {
         name,
         createdDate: currentDate,
         lastModifiedDate: currentDate,
-        isChecked: false,
+        // isChecked: false,
         author: 'admin',
         url,
-        selectors: {
-          create: newSelectors,
-        },
+        // selectors: {
+        //   create: newSelectors,
+        // },
+        selectors: selectors
       },
     });
 
