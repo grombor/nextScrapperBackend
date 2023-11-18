@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const scrapController = require('./scrapController');
+const scrapController = require('./scrapsController');
 const cors = require('cors');
 
 // Użyj middleware CORS
@@ -9,6 +9,13 @@ const corsOptions = {
   methods: 'POST', // Dozwolone metody HTTP
 };
 
-router.post('/api/scrap-add', cors(corsOptions), scrapController.addScrap);
+// Create scrap
+router.post('/add', scrapController.addScrap);
+
+// Create scrap
+router.get('/all', scrapController.getAllScraps);
+
+// Get scrap by id
+router.get('/:id', scrapController.getScrapById);
 
 module.exports = router;
