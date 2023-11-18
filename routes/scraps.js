@@ -4,10 +4,10 @@ const scrapController = require('./scrapsController');
 const cors = require('cors');
 
 // Użyj middleware CORS
-const corsOptions = {
-  origin: 'http://localhost:3000', // Adres domeny frontendu
-  methods: 'POST', // Dozwolone metody HTTP
-};
+// const corsOptions = {
+//   origin: 'http://localhost:3000', // Adres domeny frontendu
+//   methods: 'POST', // Dozwolone metody HTTP
+// };
 
 // Create scrap
 router.post('/add', scrapController.addScrap);
@@ -23,5 +23,8 @@ router.put('/:id', scrapController.editScrapById)
 
 // Delete scrap by id
 router.delete('/:id', scrapController.deleteScrapById)
+
+// Scrap data from array of ids
+router.post('/', scrapController.handleScrapByArray)
 
 module.exports = router;
