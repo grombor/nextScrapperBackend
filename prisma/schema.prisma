@@ -20,7 +20,6 @@ model Scrap {
   name             String
   createdDate      DateTime
   lastModifiedDate DateTime
-  // isChecked        Boolean?
   author           String?
   url              String
   selectors        Json[]      // Użycie Json[] dla przechowywania danych w formacie JSON

@@ -16,10 +16,7 @@ router.post('/api/scrap-add', cors(corsOptions), async (req, res) => {
   try {
     const {
       name,
-      // createdDate,
-      // lastModifiedDate,
-      // isChecked = false,
-      // author = 'admin',
+      author = 'admin',
       url,
       selectors,
     } = req.body;
@@ -31,26 +28,16 @@ router.post('/api/scrap-add', cors(corsOptions), async (req, res) => {
       });
     }
 
-    // const newSelectors = selectors.map((selector) => ({
-    //   ...selector,
-    //   value: selector.value || '',
-    // }));
-
     const currentDate = new Date().toISOString()
 
     const newScrap = await prisma.scrap.create({
       data: {
-        // uuid: uuid(),
         name,
         createdDate: currentDate,
         lastModifiedDate: currentDate,
-        // isChecked: false,
-        author: 'admin',
+        author,
         url,
-        // selectors: {
-        //   create: newSelectors,
-        // },
-        selectors: selectors
+        selectors
       },
     });
 

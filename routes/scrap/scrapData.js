@@ -87,9 +87,6 @@ router.post('/api/scrap-data', cors(corsOptions), async (req, res) => {
           in: ids,
         },
       },
-      // include: {
-      //   selectors: true,
-      // },
     });
 
     if (scraps.length === 0) {
@@ -102,7 +99,10 @@ router.post('/api/scrap-data', cors(corsOptions), async (req, res) => {
 
     await saveToFile(results);
 
-    res.status(200).json({ data: results });
+    res.status(200).json({ 
+      data: results,
+      message: "ok"
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal Server Error' });

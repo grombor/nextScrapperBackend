@@ -19,9 +19,6 @@ router.put('/api/scrap/:id', cors(corsOptions), async (req, res) => {
       where: {
         id: id,
       },
-      include: {
-        selectors: true,
-      },
     });
 
     if (!existingScrap) {
@@ -43,7 +40,6 @@ router.put('/api/scrap/:id', cors(corsOptions), async (req, res) => {
         name: newDataFromPUT.name || existingScrap.name,
         createdDate: newDataFromPUT.createdDate || existingScrap.createdDate,
         lastModifiedDate: new Date().toISOString(), // Aktualna data w formacie ISO
-        isChecked: newDataFromPUT.isChecked !== undefined ? newDataFromPUT.isChecked : existingScrap.isChecked,
         author: newDataFromPUT.author || existingScrap.author,
         url: newDataFromPUT.url || existingScrap.url,
         selectors: [...updatedSelectors]
@@ -51,8 +47,10 @@ router.put('/api/scrap/:id', cors(corsOptions), async (req, res) => {
     });
 
     // Zwróć zaktualizowany obiekt
-    return res.status(200).json(updatedSelectors);
-    // return res.status(200).json({ message: updatedSelectors });
+    return res.status(200).json({ 
+      data: updatedScrap,
+      message: 'ok'
+     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Server error.' });

@@ -12,11 +12,7 @@ const corsOptions = {
 
 router.get('/api/scrap-list', cors(corsOptions), async (req, res) => {
   try {
-    const scraps = await prisma.scrap.findMany({
-      include: {
-        selectors: true,
-      },
-    });
+    const scraps = await prisma.scrap.findMany();
 
     if (scraps.length === 0) {
       return res.status(404).json({ message: 'No entries found in the database.' });

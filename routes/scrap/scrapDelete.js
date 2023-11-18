@@ -33,7 +33,9 @@ router.delete('/api/scrap/:id', cors(corsOptions), async (req, res) => {
       },
     });
 
-    return res.status(200).json({ message: 'Scrap deleted successfully' });
+    return res.status(200).json({ 
+      data: id,
+      message: 'Scrap deleted successfully' });
 
   } catch (error) {
     console.error(error);
