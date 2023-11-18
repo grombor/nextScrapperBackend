@@ -73,7 +73,7 @@ async function getAllScraps(req, res) {
   }
 }
 
-async function editScrap(req, res) {
+async function editScrapById(req, res) {
   const id = req.params.id; // Pobierz identyfikator scrapu do edycji z URL
 
   try {
@@ -120,4 +120,36 @@ async function editScrap(req, res) {
   }
 }
 
-module.exports = { addScrap, getScrapById, getAllScraps, editScrap };
+async function deleteScrapById(req, res) {
+  const id = req.params.id; // Pobierz identyfikator scrapu do usunięcia z url
+
+  try {
+    // Sprawdź, czy scrap istnieje
+    const existingScrap = await prisma.scrap.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!existingScrap) {
+      return res.status(404).json({ error: 'Scrap not found' });
+    }
+
+    // Usuń scrap z bazy danych
+    await prisma.scrap.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    return res.status(200).json({ 
+      data: id,
+      message: 'Scrap deleted successfully' });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Server error.' });
+  }
+}
+
+module.exports = { addScrap, getScrapById, getAllScraps, editScrapById, deleteScrapById };

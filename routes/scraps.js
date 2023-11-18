@@ -19,6 +19,9 @@ router.get('/all', scrapController.getAllScraps);
 router.get('/:id', scrapController.getScrapById);
 
 // Edit scrap by id
-router.put('/:id', scrapController.editScrap)
+router.put('/:id', scrapController.editScrapById)
+
+// Delete scrap by id
+router.delete('/:id', scrapController.deleteScrapById)
 
 module.exports = router;
