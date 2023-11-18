@@ -25,10 +25,10 @@ async function scrapFromArray(scraps) {
         results.push(scrapedData);
       } catch (error) {
         console.error(
-          `Błąd podczas scrapowania ${scrap.url}: ${error.message}`
+          `Error during scraping ${scrap.url}: ${error.message}`
         );
         return {
-          error: `Błąd podczas scrapowania ${scrap.url}: ${error.message}`,
+          error: `Error during scraping ${scrap.url}: ${error.message}`,
         };
       }
     })
@@ -47,13 +47,21 @@ async function doScraping(scrap) {
 
   let updatedSelectors = [];
 
+ 
   selectors.forEach((selector) => {
+    if (selector.selector === '' && selector.value !== '') {
+      updatedSelectors.push({
+        name: selector.name,
+        selector: '',
+        value: selector.value,
+      });
+    } else {
     let updatedSelector = {
       ...selector,
       value: $(selector.selector).text().replace(/\s+/g, ' ').trim(),
     };
 
-    updatedSelectors.push(updatedSelector);
+    updatedSelectors.push(updatedSelector)};
   });
 
   // Scrap results
