@@ -18,10 +18,11 @@ app.use(cors(corsOptions));
 // Middleware do obsługi JSON
 app.use(express.json());
 
-// Importowanie scrapRoutes.js
-const scrapRoutes = require('./routes/scraps');
+const scrapsRoutes = require('./routes/scraps');
+app.use('/api/scraps', scrapsRoutes)
 
-app.use('/api/scraps', scrapRoutes)
+const filesRoutes = require('./routes/files');
+app.use('/api/files', filesRoutes)
 
 app.listen(port, () => {
   console.log(`Aplikacja jest uruchomiona na porcie ${port}`);
