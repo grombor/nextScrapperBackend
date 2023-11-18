@@ -18,4 +18,7 @@ router.get('/all', scrapController.getAllScraps);
 // Get scrap by id
 router.get('/:id', scrapController.getScrapById);
 
+// Edit scrap by id
+router.put('/:id', scrapController.editScrap)
+
 module.exports = router;

@@ -21,7 +21,7 @@ app.use(express.json());
 // Importowanie scrapRoutes.js
 const scrapRoutes = require('./routes/scraps');
 
-app.use('/scraps', scrapRoutes)
+app.use('/api/scraps', scrapRoutes)
 
 app.listen(port, () => {
   console.log(`Aplikacja jest uruchomiona na porcie ${port}`);
