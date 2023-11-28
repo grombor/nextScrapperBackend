@@ -155,6 +155,10 @@ async function deleteScrapById(req, res) {
   }
 }
 
+async function addToResults (scrap) {
+  console.log(scrap)
+}
+
 async function scrapFromArray(scraps) {
   let results = [];
 
@@ -163,6 +167,7 @@ async function scrapFromArray(scraps) {
       try {
         const scrapedData = await doScraping(scrap);
         results.push(scrapedData);
+        addToResults(scrapedData);
       } catch (error) {
         console.error(
           `Error during scraping ${scrap.url}: ${error.message}`

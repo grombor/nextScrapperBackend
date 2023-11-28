@@ -11,8 +11,7 @@ model Collection {
   id       String      @id @default(auto()) @map("_id") @db.ObjectId
   name     String
   author   String
-  uuid     String      @unique
-  scraps   Scrap[]
+  scraps   Scrap[]     
 }
 
 model Scrap {
