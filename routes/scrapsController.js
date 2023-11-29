@@ -16,7 +16,7 @@ async function addScrap(req, res) {
 
     const currentDate = new Date().toISOString();
 
-    const newScrap = await prisma.scrap.create({
+    const newScrap = await prisma.scraps.create({
       data: {
         name,
         createdDate: currentDate,
@@ -41,7 +41,7 @@ async function getScrapById(req, res) {
   const id = req.params.id;
 
   try {
-    const existingScrap = await prisma.scrap.findUnique({
+    const existingScrap = await prisma.scraps.findUnique({
       where: {
         id: id,
       },
@@ -63,7 +63,7 @@ async function getScrapById(req, res) {
 
 async function getAllScraps(req, res) {
   try {
-    const scraps = await prisma.scrap.findMany();
+    const scraps = await prisma.scraps.findMany();
 
     if (scraps.length === 0) {
       return res.status(404).json({ message: 'No entries found in the database.' });
@@ -81,7 +81,7 @@ async function editScrapById(req, res) {
 
   try {
     // Sprawdź, czy scrap istnieje
-    let existingScrap = await prisma.scrap.findUnique({
+    let existingScrap = await prisma.scraps.findUnique({
       where: {
         id: id,
       },
@@ -98,17 +98,19 @@ async function editScrapById(req, res) {
     const updatedSelectors = newDataFromPUT.selectors || existingScrap.selectors;
 
     // Aktualizuj obiekt Scrap używając danych z zapytania PUT
-    const updatedScrap = await prisma.scrap.update({
+    const updatedScrap = await prisma.scraps.update({
       where: {
         id: id,
       },
       data: {
         name: newDataFromPUT.name || existingScrap.name,
         createdDate: newDataFromPUT.createdDate || existingScrap.createdDate,
-        lastModifiedDate: new Date().toISOString(), // Aktualna data w formacie ISO
+        lastModifiedDate: new Date().toISOString(),
+        isTemplate: newDataFromPUT.isTemplate || existingScrap.isTemplate,
         author: newDataFromPUT.author || existingScrap.author,
         url: newDataFromPUT.url || existingScrap.url,
-        selectors: [...updatedSelectors]
+        selectors: [...updatedSelectors],
+        collectionId: newDataFromPUT.collectionId || existingScrap.collectionId,
       },
     });
 
@@ -128,7 +130,7 @@ async function deleteScrapById(req, res) {
 
   try {
     // Sprawdź, czy scrap istnieje
-    const existingScrap = await prisma.scrap.findUnique({
+    const existingScrap = await prisma.scraps.findUnique({
       where: {
         id: id,
       },
@@ -139,7 +141,7 @@ async function deleteScrapById(req, res) {
     }
 
     // Usuń scrap z bazy danych
-    await prisma.scrap.delete({
+    await prisma.scraps.delete({
       where: {
         id: id,
       },
@@ -155,8 +157,34 @@ async function deleteScrapById(req, res) {
   }
 }
 
-async function addToResults (scrap) {
-  console.log(scrap)
+async function addToResults(scrap) {
+  try {
+    const resultsCollection = await prisma.collection.findFirst({
+      where: {
+        name: 'Results',
+      },
+    });
+
+    if (!resultsCollection) {
+      console.error('Collection "Results" not found.');
+      return res.status(400).json({
+        error: 'Collection "Results" not found.',
+      });
+    }
+
+    const newScrap = await prisma.scraps.create({
+      data: {
+        ...scrap,
+        collection: { connect: { id: resultsCollection.id } },
+      },
+    });
+
+    console.log('Added new scrap to Results:', newScrap);
+    return newScrap;
+  } catch (error) {
+    console.error('Failed to add scrap to Results:', error);
+    throw error;
+  }
 }
 
 async function scrapFromArray(scraps) {
@@ -212,6 +240,7 @@ async function doScraping(scrap) {
   // Scrap results
   let scrapResults = {
     ...scrap,
+    createdDate: new Date().toISOString(),
     selectors: updatedSelectors,
   };
 
@@ -234,7 +263,7 @@ async function handleScrapByArray(req, res) {
   }
 
   try {
-    const scraps = await prisma.scrap.findMany({
+    const scraps = await prisma.scraps.findMany({
       where: {
         id: {
           in: ids,
