@@ -22,8 +22,8 @@ app.use(express.json());
 const scrapsRoutes = require('./routes/scraps');
 app.use('/api/scraps', scrapsRoutes)
 
-const collectionsRoutes = require('./routes/collections');
-app.use('/api/collections', collectionsRoutes)
+const resultsRoutes = require('./routes/results');
+app.use('/api/results', resultsRoutes)
 
 const filesRoutes = require('./routes/files');
 app.use('/api/files', filesRoutes)

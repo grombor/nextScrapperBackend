@@ -20,7 +20,6 @@ async function addScrap(req, res) {
       data: {
         name,
         createdDate: currentDate,
-        lastModifiedDate: currentDate,
         author,
         url,
         selectors,
@@ -98,21 +97,16 @@ async function editScrapById(req, res) {
     const updatedSelectors = newDataFromPUT.selectors || existingScrap.selectors;
 
     // Aktualizuj obiekt Scrap używając danych z zapytania PUT
-    const updatedScrap = await prisma.scraps.update({
-      where: {
-        id: id,
-      },
+    const updatedScrap = await prisma.results.create({
       data: {
         name: newDataFromPUT.name || existingScrap.name,
-        createdDate: newDataFromPUT.createdDate || existingScrap.createdDate,
-        lastModifiedDate: new Date().toISOString(),
-        isTemplate: newDataFromPUT.isTemplate || existingScrap.isTemplate,
+        createdDate: new Date().toISOString(),
         author: newDataFromPUT.author || existingScrap.author,
         url: newDataFromPUT.url || existingScrap.url,
         selectors: [...updatedSelectors],
-        collectionId: newDataFromPUT.collectionId || existingScrap.collectionId,
       },
     });
+
 
     // Zwróć zaktualizowany obiekt
     return res.status(200).json({ 
@@ -159,23 +153,9 @@ async function deleteScrapById(req, res) {
 
 async function addToResults(scrap) {
   try {
-    const resultsCollection = await prisma.collection.findFirst({
-      where: {
-        name: 'Results',
-      },
-    });
-
-    if (!resultsCollection) {
-      console.error('Collection "Results" not found.');
-      return res.status(400).json({
-        error: 'Collection "Results" not found.',
-      });
-    }
-
-    const newScrap = await prisma.scraps.create({
+    const newScrap = await prisma.ScrapResults.create({
       data: {
         ...scrap,
-        collection: { connect: { id: resultsCollection.id } },
       },
     });
 
