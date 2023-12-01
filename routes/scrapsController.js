@@ -158,9 +158,6 @@ async function addToResults(scrap) {
         ...scrap,
       },
     });
-
-    console.log('Added new scrap to Results:', newScrap);
-    return newScrap;
   } catch (error) {
     console.error('Failed to add scrap to Results:', error);
     throw error;
