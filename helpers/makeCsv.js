@@ -10,7 +10,7 @@ function makeCsv(object) {
       { id: 'id', title: 'id' },
       { id: 'name', title: 'name' },
       { id: 'createdDate', title: 'createdDate' },
-      { id: 'lastModifiedDate', title: 'lastModifiedDate' },
+      // { id: 'lastModifiedDate', title: 'lastModifiedDate' },
     ];
   
     const selectors = [];
@@ -28,7 +28,7 @@ function makeCsv(object) {
         name: object.name,
         createdDate: object.createdDate,
         // lastModifiedDate: object.createdDate,
-        lastModifiedDate: new Date().toISOString(),
+        // lastModifiedDate: new Date().toISOString(),
       };
     
       // Przypisz wartości do rekordu z selectors.value

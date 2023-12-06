@@ -153,15 +153,68 @@ async function deleteScrapById(req, res) {
 
 async function addToResults(scrap) {
   try {
-    const newScrap = await prisma.ScrapResults.create({
+    const formattedSelectors = scrap.selectors.map(selector => ({
+      name: selector.name,
+      selector: selector.selector || null,
+      value: selector.value && selector.value.trim() !== '' ? selector.value.trim() : null,
+    }));
+
+    const newScrapResult = await prisma.ScrapResults.create({
       data: {
-        ...scrap,
+        name: scrap.name,
+        createdDate: scrap.createdDate,
+        author: scrap.author,
+        url: scrap.url,
+        selectors: scrap.selectors,
       },
     });
+
+    return newScrapResult;
   } catch (error) {
     console.error('Failed to add scrap to Results:', error);
     throw error;
   }
+}
+
+
+async function doScraping(scrap) {
+  const url = scrap.url;
+  const selectors = scrap.selectors;
+
+  const response = await axios.get(url);
+  const html = response.data;
+  const $ = cheerio.load(html);
+
+  let updatedSelectors = [];
+
+ 
+  selectors.forEach((selector) => {
+    if (selector.selector === '' && selector.value !== '') {
+      updatedSelectors.push({
+        name: selector.name,
+        selector: null,
+        value: selector.value,
+      });
+    } else {
+    const scrappedValue = $(selector.selector).text().replace(/\s+/g, ' ').trim()
+    
+    let updatedSelector = {
+      ...selector,
+      value: scrappedValue !== '' ?  scrappedValue : null
+    };
+
+    
+    updatedSelectors.push(updatedSelector)};
+  });
+
+  // Scrap results
+  let scrapResults = {
+    ...scrap,
+    createdDate: new Date().toISOString(),
+    selectors: updatedSelectors,
+  };
+
+  return scrapResults;
 }
 
 async function scrapFromArray(scraps) {
@@ -187,42 +240,6 @@ async function scrapFromArray(scraps) {
   return results;
 }
 
-async function doScraping(scrap) {
-  const url = scrap.url;
-  const selectors = scrap.selectors;
-
-  const response = await axios.get(url);
-  const html = response.data;
-  const $ = cheerio.load(html);
-
-  let updatedSelectors = [];
-
- 
-  selectors.forEach((selector) => {
-    if (selector.selector === '' && selector.value !== '') {
-      updatedSelectors.push({
-        name: selector.name,
-        selector: '',
-        value: selector.value,
-      });
-    } else {
-    let updatedSelector = {
-      ...selector,
-      value: $(selector.selector).text().replace(/\s+/g, ' ').trim(),
-    };
-
-    updatedSelectors.push(updatedSelector)};
-  });
-
-  // Scrap results
-  let scrapResults = {
-    ...scrap,
-    createdDate: new Date().toISOString(),
-    selectors: updatedSelectors,
-  };
-
-  return scrapResults;
-}
 
 async function saveToFile(results) {
   results?.map((result) => {
