@@ -1,16 +1,13 @@
-const getCurrentDate = require('./getCurrentDate');
 const fs = require('fs');
 const path = require('path');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 function makeCsv(object) {
-    const createCsvWriter = require('csv-writer').createObjectCsvWriter;
   
     const header = [
       { id: 'id', title: 'id' },
       { id: 'name', title: 'name' },
       { id: 'createdDate', title: 'createdDate' },
-      // { id: 'lastModifiedDate', title: 'lastModifiedDate' },
     ];
   
     const selectors = [];
@@ -27,8 +24,6 @@ function makeCsv(object) {
         id: object.id,
         name: object.name,
         createdDate: object.createdDate,
-        // lastModifiedDate: object.createdDate,
-        // lastModifiedDate: new Date().toISOString(),
       };
     
       // Przypisz wartości do rekordu z selectors.value
@@ -39,7 +34,7 @@ function makeCsv(object) {
       const records = [record];
     
       const outputDir = 'public/results';
-      const outputFilePath = path.join(outputDir, `${object.id}.csv`);
+      const outputFilePath = path.join(outputDir, `${object.id}_${object.name}.csv`);
     
       // Sprawdź, czy plik istnieje
       if (fs.existsSync(outputFilePath)) {
