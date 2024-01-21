@@ -5,7 +5,7 @@ const scrapController = require('./scrapsController');
 // Create scrap
 router.post('/add', scrapController.addScrap);
 
-// Create scrap
+// Get all scraps
 router.get('/all', scrapController.getAllScraps);
 
 // Get scrap by id
