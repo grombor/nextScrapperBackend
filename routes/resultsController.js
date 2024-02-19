@@ -21,6 +21,35 @@ async function addResult(req, res) {
 
 async function getResult(req, res) {
   try {
+    const { name } = req.query; // Use req.query to access parameters from the query string
+
+    // Pobierz ostatni (najnowszy) wpis dla danego konta
+    const latestResults = await prisma.scrapResults.findMany({
+      where: { name: name },
+      take: -1,
+    });
+
+    if (latestResults.length > 0) {
+      const [data] = latestResults;
+
+      return res.status(200).json({
+        latestResults
+      });
+    } else {
+      return res.status(404).json({
+        error: 'No results found for the provided name.',
+      });
+    }
+  } catch (error) {
+    return res.status(400).json({
+      error: 'Failed to return scrap result. Please try again.',
+    });
+  }
+}
+
+
+async function postResult(req, res) {
+  try {
     const { url, author, id, name } = req.body;
 
     // Pobierz ostatni (najnowszy) wpis dla danego konta
@@ -47,5 +76,5 @@ async function getResult(req, res) {
   }
 }
 
-module.exports = { addResult, getResult };
+module.exports = { addResult, getResult, postResult };
 

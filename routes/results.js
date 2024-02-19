@@ -6,7 +6,8 @@ const resultsController = require('./resultsController');
 router.post('/add', resultsController.addResult);
 
 // Get results
-router.post('/get', resultsController.getResult);
+router.get('/get', resultsController.getResult);
+router.post('/post', resultsController.postResult);
 
 
 module.exports = router;
