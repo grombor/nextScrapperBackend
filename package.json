@@ -22,7 +22,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "vercel-build": "echo build",
+    "vercel-build": "prisma generate && echo build",
     "postinstall": "prisma generate"
   }
 }
