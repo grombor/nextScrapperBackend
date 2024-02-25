@@ -9,7 +9,12 @@ const app = express();
 
 // Użyj middleware CORS
 const corsOptions = {
-  origin: 'http://localhost:3000', // Adres domeny frontendu
+  // Adres domeny frontendu
+  // origin: 'http://localhost:3000', 
+  
+  // Debug
+  // Zezwól na dostęp ze wszystkich adresów IP
+  origin: '*', 
   methods: 'GET,POST,DELETE,PUT', // Dozwolone metody HTTP
 };
 
@@ -18,6 +23,12 @@ app.use(cors(corsOptions));
 
 // Middleware do obsługi JSON
 app.use(express.json());
+
+// Dodaj obsługę ścieżki '/'
+app.get('/', (req, res) => {
+  res.status(200).send('<h1>Hello World</h1>');
+});
+
 
 const scrapsRoutes = require('./routes/scraps');
 app.use('/api/scraps', scrapsRoutes)
