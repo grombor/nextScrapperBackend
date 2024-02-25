@@ -23,6 +23,7 @@
     "postinstall": "prisma generate",
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "build": "prisma generate",
     "vercel-build": "echo 'Vercel build script (if needed)'"
   }
 }
