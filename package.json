@@ -24,6 +24,6 @@
     "start": "node app.js",
     "dev": "nodemon app.js",
     "build": "prisma generate",
-    "vercel-build": "echo 'Vercel build script (if needed)'"
+    "vercel-build": "node app.js && echo 'Vercel build script (if needed)'"
   }
 }
