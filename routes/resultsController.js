@@ -43,6 +43,7 @@ async function getResult(req, res) {
   } catch (error) {
     return res.status(400).json({
       error: 'Failed to return scrap result. Please try again.',
+      message: error
     });
   }
 }
