@@ -1,8 +1,5 @@
 node_modules
 .env
-.public/results/*
+public/results/*
 helpers/backup_dane_konkurencji_v2.csv
 helpers/dane_konkurencji_v2.csv
-public/results/test.csv
-public/results/*
-public/results
