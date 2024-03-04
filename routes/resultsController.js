@@ -48,7 +48,6 @@ async function getResult(req, res) {
   }
 }
 
-
 async function postResult(req, res) {
   try {
     const { url, author, id, name } = req.body;
